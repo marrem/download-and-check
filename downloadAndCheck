@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if which md5 > /dev/null 2>&1;then
+	MD5BIN=md5 
+fi
+
+if which md5sum > /dev/null 2>&1;then
+	MD5BIN=md5sum
+fi
+
+
+echo "md5 binary: $MD5BIN"
+
+URL="$1"
+if [ -z $URL ];then
+	echo "Usage $0 <url>" 1>&2
+	exit 7
+fi
+FILENAME=`curl -Ow '%{filename_effective}' $URL`
+if [ $? -ne 0 ];then
+	echo "Couldn't download from '$URL'"
+	exit 6
+fi
+md5 $FILENAME | tee $FILENAME.md5
+
